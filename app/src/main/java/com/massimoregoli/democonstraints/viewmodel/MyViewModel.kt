@@ -1,0 +1,60 @@
+package com.massimoregoli.democonstraints.viewmodel
+
+import android.app.Application
+import android.util.Log
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.lifecycle.*
+import com.google.gson.GsonBuilder
+import com.massimoregoli.democonstraints.connection.APIRequest
+import com.massimoregoli.democonstraints.model.Product
+import com.massimoregoli.democonstraints.model.Products
+import org.json.JSONObject
+
+
+class MyViewModel(private var app: Application): AndroidViewModel(app) {
+
+    val productList = MutableLiveData<MutableList<Product>>()
+
+    private fun getData() {
+        val queue = APIRequest.getAPI(app)
+        queue.getProducts({
+                productList.postValue(unpackProduct(it))
+        }, {
+            Log.w("XXX", "VolleyError")
+        })
+    }
+
+    private fun unpackProduct(it: JSONObject?): MutableList<Product> {
+        val json = it?.toString()
+        val gson = GsonBuilder().create()
+        val ret = gson.fromJson(json, Products::class.java)
+        return ret.products
+    }
+
+    init {
+        getData()
+    }
+
+    fun getThumbnail(index: Int) {
+        val queue = APIRequest.getAPI(app)
+        if (!productList.value?.get(index)!!.isLoaded) {
+            productList.value?.get(index)!!.isLoaded = true
+            queue.getThumbnail(productList.value?.get(index)!!.thumbnail,
+                {
+                    productList.value?.get(index)!!.bitmap = it.asImageBitmap()
+                },
+                {
+                    Log.w("XXX", "VolleyError")
+                })
+        }
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+class ToDoViewModelFactory(
+    private val application: Application
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return MyViewModel(application) as T
+    }
+}
