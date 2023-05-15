@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
                 val context = LocalContext.current
                 var products = mutableListOf<Product>()
                 var refresh by rememberSaveable {
-                    mutableStateOf(false)
+                    mutableStateOf(0)
                 }
 
                 val vm: MyViewModel =
@@ -50,134 +50,142 @@ class MainActivity : ComponentActivity() {
                         factory =
                         ToDoViewModelFactory(context.applicationContext as Application)
                     )
+                vm.getData() {
+                    refresh = 1
+                }
 
                 vm.productList.observe(this) {
                     products = it
-                    products.sort()
-                    refresh = !refresh
+                    refresh = 2
                 }
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    refresh = !refresh
-                    LazyColumn {
-                        itemsIndexed(products) { index, it ->
-                            if (vm.productList.value?.get(index)?.isLoaded == false)
-                                vm.getThumbnail(index)
-                            ListItem(text = {
-                                Column {
-                                    if (index == 0 || products[index - 1].category != it.category) {
-                                        Text(
-                                            text = it.category.capitalize(Locale.current),
-                                            textAlign = TextAlign.Center,
-                                            color = Color.Red,
-                                            modifier = Modifier.fillMaxWidth()
-                                        )
+                    if (refresh == 2 || refresh == 3) {
+                        LazyColumn {
+                            itemsIndexed(products) { index, it ->
+                                if (vm.productList.value?.get(index)?.isLoaded == false) {
+                                    vm.getThumbnail(index) {
+                                        refresh = 3
                                     }
-                                    Card(
-                                        shape = RoundedCornerShape(8.dp),
-                                        backgroundColor = Color(0xFFFAFAFA),
-                                        modifier = Modifier
-                                            .padding(8.dp)
-                                            .fillMaxWidth()
-                                    ) {
-                                        ConstraintLayout {
-                                            val (title, desc, price,
-                                                rating, brand, thumb) = createRefs()
+                                }
+                                ListItem(text = {
+                                    Column {
+                                        if (index == 0 || products[index - 1].category != it.category) {
+                                            Text(
+                                                text = it.category.capitalize(Locale.current),
+                                                textAlign = TextAlign.Center,
+                                                color = Color.Red,
+                                                modifier = Modifier.fillMaxWidth()
+                                            )
+                                        }
+                                        Card(
+                                            shape = RoundedCornerShape(8.dp),
+                                            backgroundColor = Color(0xFFFAFAFA),
+                                            modifier = Modifier
+                                                .padding(8.dp)
+                                                .fillMaxWidth()
+                                        ) {
+                                            ConstraintLayout {
+                                                val (title, desc, price,
+                                                    rating, brand, thumb) = createRefs()
 
-                                            Text(
-                                                text = "${it.title} (${it.category})",
-                                                modifier = Modifier
-                                                    .constrainAs(title) {
-                                                        top.linkTo(parent.top, 4.dp)
-                                                        start.linkTo(parent.start, 8.dp)
-                                                        end.linkTo(parent.end, 8.dp)
-                                                    }
-                                                    .fillMaxWidth(),
-                                                textAlign = TextAlign.Start,
-                                                fontSize = 18.sp,
-                                                color = Color.Blue
-                                            )
-                                            Text(
-                                                text = it.description,
-                                                modifier = Modifier
-                                                    .constrainAs(desc) {
-                                                        top.linkTo(brand.bottom, 4.dp)
-                                                        start.linkTo(title.start)
-                                                        end.linkTo(title.end)
-                                                    }
-                                                    .padding(4.dp)
-                                                    .clip(RoundedCornerShape(4.dp))
-                                                    .background(Color.White)
-                                                    .padding(2.dp),
-                                                textAlign = TextAlign.Start,
-                                                fontSize = 16.sp,
-                                                color = Color.Black
-                                                )
-
-                                            Text(
-                                                text = it.brand,
-                                                modifier = Modifier
-                                                    .constrainAs(brand) {
-                                                        top.linkTo(title.bottom)
-                                                        start.linkTo(title.start, 8.dp)
-                                                    },
-                                                textAlign = TextAlign.Start,
-                                                fontSize = 16.sp,
-                                                color = Color.Red
-                                            )
-                                            Text(
-                                                text = "price: ${it.price} $",
-                                                modifier = Modifier
-                                                    .constrainAs(price) {
-                                                        top.linkTo(desc.bottom, 4.dp)
-                                                        start.linkTo(parent.start, 8.dp)
-                                                    },
-                                                textAlign = TextAlign.Start,
-                                                fontSize = 16.sp,
-                                                color = Color.Black
-                                            )
-                                            Row(
-                                                modifier = Modifier
-                                                    .constrainAs(rating) {
-                                                        top.linkTo(price.top)
-                                                        end.linkTo(parent.end, 8.dp)
-                                                    },
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Icon(
-                                                    Icons.TwoTone.Star, null,
-                                                    tint = Color(0xFFFFD700)
+                                                Text(
+                                                    text = "${it.title} (${it.category})",
+                                                    modifier = Modifier
+                                                        .constrainAs(title) {
+                                                            top.linkTo(parent.top, 4.dp)
+                                                            start.linkTo(parent.start, 8.dp)
+                                                            end.linkTo(parent.end, 8.dp)
+                                                        }
+                                                        .fillMaxWidth(),
+                                                    textAlign = TextAlign.Start,
+                                                    fontSize = 18.sp,
+                                                    color = Color.Blue
                                                 )
                                                 Text(
-                                                    text = "${it.rating}",
-
+                                                    text = it.description,
+                                                    modifier = Modifier
+                                                        .constrainAs(desc) {
+                                                            top.linkTo(brand.bottom, 4.dp)
+                                                            start.linkTo(title.start)
+                                                            end.linkTo(title.end)
+                                                        }
+                                                        .padding(4.dp)
+                                                        .clip(RoundedCornerShape(4.dp))
+                                                        .background(Color.White)
+                                                        .padding(2.dp),
                                                     textAlign = TextAlign.Start,
                                                     fontSize = 16.sp,
                                                     color = Color.Black
                                                 )
-                                            }
-                                            if (it.bitmap != null)
-                                                Icon(it.bitmap!!, null,
-                                                    tint = Color.Unspecified,
+
+                                                Text(
+                                                    text = it.brand,
                                                     modifier = Modifier
-                                                        .constrainAs(thumb)
-                                                        {
-                                                            top.linkTo(rating.bottom, 4.dp)
-                                                            start.linkTo(parent.start, 4.dp)
-                                                            end.linkTo(parent.end)
-                                                            bottom.linkTo(parent.bottom, 8.dp)
-                                                        }
-                                                        .clip(RoundedCornerShape(4.dp))
+                                                        .constrainAs(brand) {
+                                                            top.linkTo(title.bottom)
+                                                            start.linkTo(title.start, 8.dp)
+                                                        },
+                                                    textAlign = TextAlign.Start,
+                                                    fontSize = 16.sp,
+                                                    color = Color.Red
                                                 )
+                                                Text(
+                                                    text = "price: ${it.price} $",
+                                                    modifier = Modifier
+                                                        .constrainAs(price) {
+                                                            top.linkTo(desc.bottom, 4.dp)
+                                                            start.linkTo(parent.start, 8.dp)
+                                                        },
+                                                    textAlign = TextAlign.Start,
+                                                    fontSize = 16.sp,
+                                                    color = Color.Black
+                                                )
+                                                Row(
+                                                    modifier = Modifier
+                                                        .constrainAs(rating) {
+                                                            top.linkTo(price.top)
+                                                            end.linkTo(parent.end, 8.dp)
+                                                        },
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Icon(
+                                                        Icons.TwoTone.Star, null,
+                                                        tint = Color(0xFFFFD700)
+                                                    )
+                                                    Text(
+                                                        text = "${it.rating}",
+
+                                                        textAlign = TextAlign.Start,
+                                                        fontSize = 16.sp,
+                                                        color = Color.Black
+                                                    )
+                                                }
+                                                if (it.bitmap != null) {
+                                                    refresh = 2
+                                                    Icon(it.bitmap!!, null,
+                                                        tint = Color.Unspecified,
+                                                        modifier = Modifier
+                                                            .constrainAs(thumb)
+                                                            {
+                                                                top.linkTo(rating.bottom, 4.dp)
+                                                                start.linkTo(parent.start, 4.dp)
+                                                                end.linkTo(parent.end)
+                                                                bottom.linkTo(parent.bottom, 8.dp)
+                                                            }
+                                                            .clip(RoundedCornerShape(4.dp))
+                                                    )
+                                                }
+                                            }
                                         }
+
                                     }
+                                })
+                            }
 
-                                }
-                            })
                         }
-
                     }
                 }
             }

@@ -15,10 +15,13 @@ class MyViewModel(private var app: Application): AndroidViewModel(app) {
 
     val productList = MutableLiveData<MutableList<Product>>()
 
-    private fun getData() {
+    fun getData(onSuccess: () -> Unit) {
         val queue = APIRequest.getAPI(app)
         queue.getProducts({
-                productList.postValue(unpackProduct(it))
+            val l = unpackProduct(it)
+            l.sort()
+            productList.postValue(l)
+            onSuccess()
         }, {
             Log.w("XXX", "VolleyError")
         })
@@ -32,16 +35,16 @@ class MyViewModel(private var app: Application): AndroidViewModel(app) {
     }
 
     init {
-        getData()
     }
 
-    fun getThumbnail(index: Int) {
+    fun getThumbnail(index: Int, onSuccess: () -> Unit) {
         val queue = APIRequest.getAPI(app)
         if (!productList.value?.get(index)!!.isLoaded) {
             productList.value?.get(index)!!.isLoaded = true
             queue.getThumbnail(productList.value?.get(index)!!.thumbnail,
                 {
                     productList.value?.get(index)!!.bitmap = it.asImageBitmap()
+                    onSuccess()
                 },
                 {
                     Log.w("XXX", "VolleyError")
