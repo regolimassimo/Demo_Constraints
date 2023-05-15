@@ -35,15 +35,14 @@ class APIRequest(context: Context) {
         val jsonLoader = JsonObjectRequest(URL,
             onSuccess,
             onFail)
-        jsonLoader.setRetryPolicy(
-            DefaultRetryPolicy(2000,
+        jsonLoader.retryPolicy = DefaultRetryPolicy(5000,
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
             DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
-        );
         request.add(jsonLoader)
 
     }
 
+    @Suppress("unused")
     fun getThumbnail(s: String,
                      onSuccess: (Bitmap) -> Unit,
                      onFail: (VolleyError) -> Unit) {
@@ -53,6 +52,6 @@ class APIRequest(context: Context) {
             null, Bitmap.Config.ARGB_8888,
             onFail)
         request.add(bitmapRequest)
-        Log.w("XXX", s)
+        Log.w("RGL", s)
     }
 }

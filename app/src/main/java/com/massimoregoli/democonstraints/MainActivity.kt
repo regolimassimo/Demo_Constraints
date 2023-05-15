@@ -28,8 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.massimoregoli.democonstraints.ui.theme.DemoConstraintsTheme
-import com.massimoregoli.democonstraints.viewmodel.MyState
+import com.massimoregoli.democonstraints.ui.theme.*
 import com.massimoregoli.democonstraints.viewmodel.MyState.*
 import com.massimoregoli.democonstraints.viewmodel.MyViewModel
 import com.massimoregoli.democonstraints.viewmodel.ToDoViewModelFactory
@@ -53,7 +52,7 @@ class MainActivity : ComponentActivity() {
                         factory =
                         ToDoViewModelFactory(context.applicationContext as Application)
                     )
-                vm.getData() {
+                vm.getData {
                     refresh = Error
                     message = it
                 }
@@ -67,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     when (refresh) {
-                        Success -> { ProductList(vm){refresh=it}}
+                        Success -> { ProductList(vm)}
                         Error -> { ErrorMessage(message) }
                         Load, Init -> { Loading() }
                     }
@@ -93,7 +92,7 @@ fun ErrorMessage(message: String) {
                 end.linkTo(parent.end)
                 bottom.linkTo(parent.bottom)
             },
-            fontSize = 24.sp
+            fontSize = 16.sp
         )
     }
 }
@@ -121,8 +120,7 @@ fun Loading() {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProductList(
-    vm: MyViewModel,
-    onRefreshState: (MyState) -> Unit) {
+    vm: MyViewModel) {
     LazyColumn {
         itemsIndexed(vm.productList.value!!) { index, it ->
 //            if (vm.productList.value?.get(index)?.isLoaded == false) {
@@ -142,9 +140,9 @@ fun ProductList(
                     }
                     Card(
                         shape = RoundedCornerShape(8.dp),
-                        backgroundColor = Color(0xFFFAFAFA),
+                        backgroundColor = CARD_BACKGROUND,
                         modifier = Modifier
-                            .padding(8.dp)
+                            .padding(4.dp)
                             .fillMaxWidth()
                     ) {
                         ConstraintLayout {
@@ -155,7 +153,7 @@ fun ProductList(
                                 text = "${it.title} (${it.category})",
                                 modifier = Modifier
                                     .constrainAs(title) {
-                                        top.linkTo(parent.top, 4.dp)
+                                        top.linkTo(parent.top, 8.dp)
                                         start.linkTo(parent.start, 8.dp)
                                         end.linkTo(parent.end, 8.dp)
                                     }
@@ -168,14 +166,14 @@ fun ProductList(
                                 text = it.description,
                                 modifier = Modifier
                                     .constrainAs(desc) {
-                                        top.linkTo(brand.bottom, 4.dp)
+                                        top.linkTo(brand.bottom, 8.dp)
                                         start.linkTo(title.start)
                                         end.linkTo(title.end)
                                     }
-                                    .padding(4.dp)
+                                    .padding(8.dp)
                                     .clip(RoundedCornerShape(4.dp))
-                                    .background(Color.White)
-                                    .padding(2.dp),
+                                    .background(BACKGROUND)
+                                    .padding(8.dp),
                                 textAlign = TextAlign.Start,
                                 fontSize = 16.sp,
                                 color = Color.Black

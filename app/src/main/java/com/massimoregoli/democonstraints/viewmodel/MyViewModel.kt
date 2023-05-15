@@ -2,7 +2,6 @@ package com.massimoregoli.democonstraints.viewmodel
 
 import android.app.Application
 import android.util.Log
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.*
 import com.google.gson.GsonBuilder
 import com.massimoregoli.democonstraints.connection.APIRequest
