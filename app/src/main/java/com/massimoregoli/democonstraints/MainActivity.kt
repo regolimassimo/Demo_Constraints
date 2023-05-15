@@ -122,12 +122,9 @@ fun Loading() {
 fun ProductList(
     vm: MyViewModel) {
     LazyColumn {
+
         itemsIndexed(vm.productList.value!!) { index, it ->
-//            if (vm.productList.value?.get(index)?.isLoaded == false) {
-//                vm.getThumbnail(index) {
-//                    onRefreshState(Thumb)
-//                }
-//            }
+
             ListItem(text = {
                 Column {
                     if (index == 0 || vm.productList.value!![index - 1].category != it.category) {
@@ -140,7 +137,7 @@ fun ProductList(
                     }
                     Card(
                         shape = RoundedCornerShape(8.dp),
-                        backgroundColor = CARD_BACKGROUND,
+                        backgroundColor = Color(0xFFFCFCFC),
                         modifier = Modifier
                             .padding(4.dp)
                             .fillMaxWidth()
@@ -153,10 +150,11 @@ fun ProductList(
                                 text = "${it.title} (${it.category})",
                                 modifier = Modifier
                                     .constrainAs(title) {
-                                        top.linkTo(parent.top, 8.dp)
-                                        start.linkTo(parent.start, 8.dp)
-                                        end.linkTo(parent.end, 8.dp)
+                                        top.linkTo(parent.top)
+                                        start.linkTo(parent.start)
+                                        end.linkTo(parent.end)
                                     }
+                                    .padding(8.dp)
                                     .fillMaxWidth(),
                                 textAlign = TextAlign.Start,
                                 fontSize = 18.sp,
@@ -172,7 +170,7 @@ fun ProductList(
                                     }
                                     .padding(8.dp)
                                     .clip(RoundedCornerShape(4.dp))
-                                    .background(BACKGROUND)
+                                    .background(Color(0xFFF0F0F0))
                                     .padding(8.dp),
                                 textAlign = TextAlign.Start,
                                 fontSize = 16.sp,
@@ -190,17 +188,20 @@ fun ProductList(
                                 fontSize = 16.sp,
                                 color = Color.Red
                             )
+
                             Text(
-                                text = "price: ${it.price} $",
+                                text = "Price: ${it.price} $",
                                 modifier = Modifier
                                     .constrainAs(price) {
-                                        top.linkTo(desc.bottom, 4.dp)
+                                        top.linkTo(desc.bottom, 2.dp)
                                         start.linkTo(parent.start, 8.dp)
+
                                     },
                                 textAlign = TextAlign.Start,
-                                fontSize = 16.sp,
+                                fontSize = 14.sp,
                                 color = Color.Black
                             )
+
                             Row(
                                 modifier = Modifier
                                     .constrainAs(rating) {
@@ -215,9 +216,8 @@ fun ProductList(
                                 )
                                 Text(
                                     text = "${it.rating}",
-
                                     textAlign = TextAlign.Start,
-                                    fontSize = 16.sp,
+                                    fontSize = 14.sp,
                                     color = Color.Black
                                 )
                             }
@@ -225,28 +225,14 @@ fun ProductList(
                                 modifier = Modifier
                                     .constrainAs(thumb)
                                     {
-                                        top.linkTo(rating.bottom, 4.dp)
-                                        start.linkTo(parent.start, 4.dp)
+                                        top.linkTo(rating.bottom)
+                                        start.linkTo(parent.start)
                                         end.linkTo(parent.end)
                                         bottom.linkTo(parent.bottom, 8.dp)
                                     }
                                     .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                                    .clip(RoundedCornerShape(4.dp)))
-//                            if (it.bitmap != null) {
-//                                onRefreshState(Success)
-//                                Image(it.bitmap!!, null,
-//                                    modifier = Modifier
-//                                        .constrainAs(thumb)
-//                                        {
-//                                            top.linkTo(rating.bottom, 4.dp)
-//                                            start.linkTo(parent.start, 4.dp)
-//                                            end.linkTo(parent.end)
-//                                            bottom.linkTo(parent.bottom, 8.dp)
-//                                        }
-//                                        .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-//                                        .clip(RoundedCornerShape(4.dp))
-//                                )
-//                            }
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .padding(4.dp))
                         }
                     }
 
