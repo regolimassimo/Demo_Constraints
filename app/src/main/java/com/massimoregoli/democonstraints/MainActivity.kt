@@ -31,7 +31,7 @@ import coil.compose.AsyncImage
 import com.massimoregoli.democonstraints.ui.theme.*
 import com.massimoregoli.democonstraints.viewmodel.MyState.*
 import com.massimoregoli.democonstraints.viewmodel.MyViewModel
-import com.massimoregoli.democonstraints.viewmodel.ToDoViewModelFactory
+import com.massimoregoli.democonstraints.viewmodel.ProductViewModelFactory
 
 
 class MainActivity : ComponentActivity() {
@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
                 val vm: MyViewModel =
                     viewModel(
                         factory =
-                        ToDoViewModelFactory(context.applicationContext as Application)
+                        ProductViewModelFactory(context.applicationContext as Application)
                     )
                 vm.getData {
                     refresh = Error

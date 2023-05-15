@@ -39,7 +39,7 @@ class MyViewModel(private var app: Application) : AndroidViewModel(app) {
 }
 
 @Suppress("UNCHECKED_CAST")
-class ToDoViewModelFactory(
+class ProductViewModelFactory(
     private val application: Application
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
