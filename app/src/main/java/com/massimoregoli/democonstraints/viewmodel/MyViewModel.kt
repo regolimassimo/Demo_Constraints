@@ -15,16 +15,19 @@ class MyViewModel(private var app: Application): AndroidViewModel(app) {
 
     val productList = MutableLiveData<MutableList<Product>>()
 
-    fun getData(onSuccess: () -> Unit) {
+    private fun getData() {
         val queue = APIRequest.getAPI(app)
         queue.getProducts({
             val l = unpackProduct(it)
             l.sort()
             productList.postValue(l)
-            onSuccess()
         }, {
             Log.w("XXX", "VolleyError")
         })
+    }
+
+    init {
+        getData()
     }
 
     private fun unpackProduct(it: JSONObject?): MutableList<Product> {
@@ -32,9 +35,6 @@ class MyViewModel(private var app: Application): AndroidViewModel(app) {
         val gson = GsonBuilder().create()
         val ret = gson.fromJson(json, Products::class.java)
         return ret.products
-    }
-
-    init {
     }
 
     fun getThumbnail(index: Int, onSuccess: () -> Unit) {

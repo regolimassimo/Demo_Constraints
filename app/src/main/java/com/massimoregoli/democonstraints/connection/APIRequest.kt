@@ -42,7 +42,7 @@ class APIRequest(context: Context) {
                      onFail: (VolleyError) -> Unit) {
         val bitmapRequest = ImageRequest(s,
             onSuccess,
-            250, 166,
+            512, 512,
             null, Bitmap.Config.ARGB_8888,
             onFail)
         request.add(bitmapRequest)
