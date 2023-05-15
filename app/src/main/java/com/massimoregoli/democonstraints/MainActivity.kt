@@ -4,7 +4,6 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -14,11 +13,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Star
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.massimoregoli.democonstraints.ui.theme.DemoConstraintsTheme
 import com.massimoregoli.democonstraints.viewmodel.MyState
 import com.massimoregoli.democonstraints.viewmodel.MyState.*
@@ -47,25 +44,32 @@ class MainActivity : ComponentActivity() {
                 var refresh by rememberSaveable {
                     mutableStateOf(Load)
                 }
+                var message by rememberSaveable {
+                    mutableStateOf("")
+                }
 
                 val vm: MyViewModel =
                     viewModel(
                         factory =
                         ToDoViewModelFactory(context.applicationContext as Application)
                     )
-
+                vm.getData() {
+                    refresh = Error
+                    message = it
+                }
                 vm.productList.observe(this) {
                     refresh = Success
                 }
+
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
                     when (refresh) {
-                        Success, Thumb -> { ProductList(vm){refresh=it}}
-                        Error -> {ErrorMessage()}
-                        Load -> {Loading()}
-                        Init -> {}
+                        Success -> { ProductList(vm){refresh=it}}
+                        Error -> { ErrorMessage(message) }
+                        Load, Init -> { Loading() }
                     }
                 }
             }
@@ -74,8 +78,24 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ErrorMessage() {
+fun ErrorMessage(message: String) {
+    ConstraintLayout {
+        val msg = createRef()
 
+        Text(text = message, modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
+            .padding(8.dp)
+            .constrainAs(msg) {
+                top.linkTo(parent.top)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                bottom.linkTo(parent.bottom)
+            },
+            fontSize = 24.sp
+        )
+    }
 }
 
 @Composable
@@ -96,19 +116,20 @@ fun Loading() {
             }
         )
     }
-
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ProductList(vm: MyViewModel, onRefreshState: (MyState) -> Unit) {
+fun ProductList(
+    vm: MyViewModel,
+    onRefreshState: (MyState) -> Unit) {
     LazyColumn {
         itemsIndexed(vm.productList.value!!) { index, it ->
-            if (vm.productList.value?.get(index)?.isLoaded == false) {
-                vm.getThumbnail(index) {
-                    onRefreshState(Thumb)
-                }
-            }
+//            if (vm.productList.value?.get(index)?.isLoaded == false) {
+//                vm.getThumbnail(index) {
+//                    onRefreshState(Thumb)
+//                }
+//            }
             ListItem(text = {
                 Column {
                     if (index == 0 || vm.productList.value!![index - 1].category != it.category) {
@@ -202,21 +223,32 @@ fun ProductList(vm: MyViewModel, onRefreshState: (MyState) -> Unit) {
                                     color = Color.Black
                                 )
                             }
-                            if (it.bitmap != null) {
-                                onRefreshState(Success)
-                                Image(it.bitmap!!, null,
-                                    modifier = Modifier
-                                        .constrainAs(thumb)
-                                        {
-                                            top.linkTo(rating.bottom, 4.dp)
-                                            start.linkTo(parent.start, 4.dp)
-                                            end.linkTo(parent.end)
-                                            bottom.linkTo(parent.bottom, 8.dp)
-                                        }
-                                        .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                                        .clip(RoundedCornerShape(4.dp))
-                                )
-                            }
+                            AsyncImage(it.thumbnail, null,
+                                modifier = Modifier
+                                    .constrainAs(thumb)
+                                    {
+                                        top.linkTo(rating.bottom, 4.dp)
+                                        start.linkTo(parent.start, 4.dp)
+                                        end.linkTo(parent.end)
+                                        bottom.linkTo(parent.bottom, 8.dp)
+                                    }
+                                    .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+                                    .clip(RoundedCornerShape(4.dp)))
+//                            if (it.bitmap != null) {
+//                                onRefreshState(Success)
+//                                Image(it.bitmap!!, null,
+//                                    modifier = Modifier
+//                                        .constrainAs(thumb)
+//                                        {
+//                                            top.linkTo(rating.bottom, 4.dp)
+//                                            start.linkTo(parent.start, 4.dp)
+//                                            end.linkTo(parent.end)
+//                                            bottom.linkTo(parent.bottom, 8.dp)
+//                                        }
+//                                        .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+//                                        .clip(RoundedCornerShape(4.dp))
+//                                )
+//                            }
                         }
                     }
 
@@ -225,6 +257,6 @@ fun ProductList(vm: MyViewModel, onRefreshState: (MyState) -> Unit) {
         }
 
     }
-
 }
+
 

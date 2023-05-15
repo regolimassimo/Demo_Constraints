@@ -15,7 +15,7 @@ class MyViewModel(private var app: Application): AndroidViewModel(app) {
 
     val productList = MutableLiveData<MutableList<Product>>()
 
-    private fun getData() {
+    fun getData(onError: (String) -> Unit) {
         val queue = APIRequest.getAPI(app)
         queue.getProducts({
             val l = unpackProduct(it)
@@ -23,12 +23,13 @@ class MyViewModel(private var app: Application): AndroidViewModel(app) {
             productList.postValue(l)
         }, {
             Log.w("XXX", "VolleyError")
+            if(it?.message != null)
+                onError(it.message!!)
+            else
+                onError("Network Error")
         })
     }
 
-    init {
-        getData()
-    }
 
     private fun unpackProduct(it: JSONObject?): MutableList<Product> {
         val json = it?.toString()
@@ -37,20 +38,20 @@ class MyViewModel(private var app: Application): AndroidViewModel(app) {
         return ret.products
     }
 
-    fun getThumbnail(index: Int, onSuccess: () -> Unit) {
-        val queue = APIRequest.getAPI(app)
-        if (!productList.value?.get(index)!!.isLoaded) {
-            productList.value?.get(index)!!.isLoaded = true
-            queue.getThumbnail(productList.value?.get(index)!!.thumbnail,
-                {
-                    productList.value?.get(index)!!.bitmap = it.asImageBitmap()
-                    onSuccess()
-                },
-                {
-                    Log.w("XXX", "VolleyError")
-                })
-        }
-    }
+//    fun getThumbnail(index: Int, onSuccess: () -> Unit) {
+//        val queue = APIRequest.getAPI(app)
+//        if (!productList.value?.get(index)!!.isLoaded) {
+//            productList.value?.get(index)!!.isLoaded = true
+//            queue.getThumbnail(productList.value?.get(index)!!.thumbnail,
+//                {
+//                    productList.value?.get(index)!!.bitmap = it.asImageBitmap()
+//                    onSuccess()
+//                },
+//                {
+//                    Log.w("XXX", "VolleyError")
+//                })
+//        }
+//    }
 }
 
 @Suppress("UNCHECKED_CAST")
