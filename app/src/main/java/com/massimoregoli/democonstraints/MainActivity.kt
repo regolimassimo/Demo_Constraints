@@ -66,9 +66,15 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     when (refresh) {
-                        Success -> { ProductList(vm)}
-                        Error -> { ErrorMessage(message) }
-                        Load, Init -> { Loading() }
+                        Success -> {
+                            ProductList(vm)
+                        }
+                        Error -> {
+                            ErrorMessage(message)
+                        }
+                        Load, Init -> {
+                            Loading()
+                        }
                     }
                 }
             }
@@ -81,17 +87,18 @@ fun ErrorMessage(message: String) {
     ConstraintLayout {
         val msg = createRef()
 
-        Text(text = message, modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
-            .padding(8.dp)
-            .constrainAs(msg) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
-            },
+        Text(
+            text = message, modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
+                .padding(8.dp)
+                .constrainAs(msg) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                },
             fontSize = 16.sp
         )
     }
@@ -120,7 +127,8 @@ fun Loading() {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProductList(
-    vm: MyViewModel) {
+    vm: MyViewModel
+) {
     LazyColumn {
 
         itemsIndexed(vm.productList.value!!) { index, it ->

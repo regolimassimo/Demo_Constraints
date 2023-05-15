@@ -10,7 +10,7 @@ import com.massimoregoli.democonstraints.model.Products
 import org.json.JSONObject
 
 
-class MyViewModel(private var app: Application): AndroidViewModel(app) {
+class MyViewModel(private var app: Application) : AndroidViewModel(app) {
 
     val productList = MutableLiveData<MutableList<Product>>()
 
@@ -22,7 +22,7 @@ class MyViewModel(private var app: Application): AndroidViewModel(app) {
             productList.postValue(l)
         }, {
             Log.w("XXX", "VolleyError")
-            if(it?.message != null)
+            if (it?.message != null)
                 onError(it.message!!)
             else
                 onError("Network Error")
@@ -36,21 +36,6 @@ class MyViewModel(private var app: Application): AndroidViewModel(app) {
         val ret = gson.fromJson(json, Products::class.java)
         return ret.products
     }
-
-//    fun getThumbnail(index: Int, onSuccess: () -> Unit) {
-//        val queue = APIRequest.getAPI(app)
-//        if (!productList.value?.get(index)!!.isLoaded) {
-//            productList.value?.get(index)!!.isLoaded = true
-//            queue.getThumbnail(productList.value?.get(index)!!.thumbnail,
-//                {
-//                    productList.value?.get(index)!!.bitmap = it.asImageBitmap()
-//                    onSuccess()
-//                },
-//                {
-//                    Log.w("XXX", "VolleyError")
-//                })
-//        }
-//    }
 }
 
 @Suppress("UNCHECKED_CAST")

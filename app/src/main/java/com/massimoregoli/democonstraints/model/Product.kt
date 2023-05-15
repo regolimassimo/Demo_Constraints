@@ -12,11 +12,12 @@ data class Product(
     val category: String,
     val thumbnail: String,
     val images: List<String>,
-//    var bitmap: ImageBitmap? = null,
-//    var isLoaded: Boolean
 ) : Comparable<Product> {
     override fun compareTo(other: Product): Int {
-        return compareValuesBy(this, other, {it.category.lowercase()}, {it.title.lowercase()})
+        return compareValuesBy(this,
+            other,
+            {it.category.lowercase()},
+            {it.title.lowercase()})
     }
 }
 
