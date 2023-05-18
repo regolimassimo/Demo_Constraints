@@ -202,7 +202,7 @@ fun ProductList(
                                 modifier = Modifier
                                     .constrainAs(price) {
                                         top.linkTo(desc.bottom, 2.dp)
-                                        start.linkTo(parent.start, 8.dp)
+                                        start.linkTo(desc.start)
 
                                     },
                                 textAlign = TextAlign.Start,
@@ -214,7 +214,7 @@ fun ProductList(
                                 modifier = Modifier
                                     .constrainAs(rating) {
                                         top.linkTo(price.top)
-                                        end.linkTo(parent.end, 8.dp)
+                                        end.linkTo(desc.end)
                                     },
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
