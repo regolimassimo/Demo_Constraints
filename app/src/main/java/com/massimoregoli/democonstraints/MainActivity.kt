@@ -140,7 +140,8 @@ fun ProductList(
                             text = it.category.capitalize(Locale.current),
                             textAlign = TextAlign.Center,
                             color = Color.Red,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            fontSize = 24.sp
                         )
                     }
                     Card(
