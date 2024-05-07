@@ -130,9 +130,7 @@ fun ProductList(
     vm: MyViewModel
 ) {
     LazyColumn {
-
         itemsIndexed(vm.productList.value!!) { index, it ->
-
             ListItem(text = {
                 Column {
                     if (index == 0 || vm.productList.value!![index - 1].category != it.category) {
@@ -154,7 +152,6 @@ fun ProductList(
                         ConstraintLayout {
                             val (title, desc, price,
                                 rating, brand, thumb) = createRefs()
-
                             Text(
                                 text = "${it.title} (${it.category})",
                                 modifier = Modifier
